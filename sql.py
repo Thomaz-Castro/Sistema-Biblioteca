@@ -1,4 +1,5 @@
 from mysql.connector import cursor, connect
+import pandas as pd
 
 def criar_conexao(host, usuario, senha, banco):
     return connect(host=host, user=usuario, password=senha, database=banco)
@@ -13,13 +14,17 @@ def insere_usuario(con, nome, endereco, bairro, cidade, estado, sexo, telefone, 
     cursor.execute(code)
     cursor.close()
     con.commit()
+def delete_usario(con, id):
+    cursor = con.cursor()
+    code = "Delete from usuarios where id = '{}'".format(id)
+    cursor.execute(code)
+    cursor.close()
+    con.commit()
 
 def select_todos_usuarios(con):
-    cursor = con.cursor()
-    sql = "SELECT nome, id  FROM usuarios"
-    cursor.execute(sql)
+    query = "SELECT * FROM usuarios"
+    df = pd.read_sql(query, con)
+    return df
 
-    for (nome, id) in cursor:
-        print(nome, id)
-    
+
     cursor.close()
