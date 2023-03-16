@@ -1,47 +1,63 @@
+import PySimpleGUI as sg
+import janelasGUI as gui
 import sql
+from pandas import read_sql
+""" from dateutil import parser """
+
+""" def is_valid_date(date_string):
+    try:
+        parser.parse(date_string)
+        return True
+    except ValueError:
+        return False
+
+def extract_date_parts(date_string):
+    try:
+        date = parser.parse(date_string)
+        year, month, day = date.year, date.month, date.day
+        return year, month, day
+    except ValueError:
+        return None, None, None """
 
 
+#Conectar ao banco de dados
 con = sql.criar_conexao("localhost", "root", "", "biblioteca")
 
-print('\033[1;35m')
-print(r"""
-------------------------------------------------------------------------------------------------------------------------
- ______   _______  _        _______  _______        ______   _______        ______   _______  ______   _______  _______ 
-(  ___ \ (  ___  )( (    /|(  ____ \(  ___  )      (  __  \ (  ____ \      (  __  \ (  ___  )(  __  \ (  ___  )(  ____ \
-| (   ) )| (   ) ||  \  ( || (    \/| (   ) |      | (  \  )| (    \/      | (  \  )| (   ) || (  \  )| (   ) || (    \/
-| (__/ / | (___) ||   \ | || |      | |   | |      | |   ) || (__          | |   ) || (___) || |   ) || |   | || (_____ 
-|  __ (  |  ___  || (\ \) || |      | |   | |      | |   | ||  __)         | |   | ||  ___  || |   | || |   | |(_____  )
-| (  \ \ | (   ) || | \   || |      | |   | |      | |   ) || (            | |   ) || (   ) || |   ) || |   | |      ) |
-| )___) )| )   ( || )  \  || (____/\| (___) |      | (__/  )| (____/\      | (__/  )| )   ( || (__/  )| (___) |/\____) |
-|/ \___/ |/     \||/    )_)(_______/(_______)      (______/ (_______/      (______/ |/     \|(______/ (_______)\_______)
-------------------------------------------------------------------------------------------------------------------------                                                                                                                     """)
-print('\033[m')
+#Criar as janelas Iniciais
+window1, window2 = gui.Janela_Inicio(), None
 
-print('='*30)
+#Loop de eventos
+while True:
+    janela,evento,valores = sg.read_all_windows()
 
-choice = int(input("Que atividade voce quer realizar? \n[1]- Inserir usuário\n[2]- Deletar usuário\n[3]- Ver usuários\nEscolha: "))
+    #Quando a janela for fechada
+    if janela == window1 and evento == sg.WIN_CLOSED:
+        break
+    #Quando queremos ir para proxima janela
+    if janela == window1 and evento == 'PESQUISAR 🔎':
+        window2 = gui.janela_pesquisa()
+        window1.hide()
 
-print('')
+    #Quando queremos voltar para janela anterior
 
-if choice == 1:
-    nome = input("Digite o nome do usuário: ")
-    endereco = input("Digite o endereço do usuário: ")
-    bairro = input("Digite o bairro do usuário: ")
-    cidade = input("Digite a cidade do usuário: ")
-    estado = input("Digite o estado do usuário: ")
-    sexo = input("Digite o sexo do usuário: ")
-    telefone = input("Digite o telefone do usuário: ")
-    email = input("Digite o email do usuário: ")
+    if janela == window2 and evento == 'Voltar':
+        window2.close()
+        window1.un_hide()
 
-    sql.insere_usuario(con, nome, endereco, bairro, cidade, estado, sexo, telefone, email)
+    
 
-elif choice == 2:
-    aidi = str(input("Digite o id do usuário a ser deletado: "))
-    sql.delete_usario(con,aidi)
+    #Lógica de eventos dos botões    
+    if janela == window1 and evento == 'ADICIONAR ➕': 
+            sql.insere_emprestimo(con, str((valores['id-usuario'])),str((valores['id-livro'])),str((valores['data-empr'])),str((valores['data-devol'])))
+            df = read_sql(sql.Query_padrao(), con)
+            # Atualiza a tabela com os dados do df
+            janela['-TABLE-'].update(values=df.values.tolist())
 
-elif choice == 3:
-    print(sql.select_todos_usuarios(con))
+"""         if is_valid_date(valores['data-empr']) == True and extract_date_parts(valores['data-empr']) == True and is_valid_date(valores['data-devol']) == True and (extract_date_parts(valores['data-devol']) != None): """
 
-sql.fechar_conexao(con)
-
-print('\nokok')
+"""             if (int((valores['id-usuario'])) > (df.shape[0])) or (int((valores['id-usuario'])) < 1) or (isinstance(int((valores['id-usuario'])), int) == False):
+                janela['-MSG-'].update('* ID Inválido.')
+                for i in range(125):
+                    eventos, valores =janela.read(100)
+                janela['-MSG-'].update('*mensagem')
+            else: """
