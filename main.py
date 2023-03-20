@@ -22,9 +22,10 @@ def extract_date_parts(date_string):
 
 #Conectar ao banco de dados
 con = sql.criar_conexao("localhost", "root", "", "biblioteca")
+df = read_sql(sql.Query_padrao(), con)
 
 #Criar as janelas Iniciais
-window1, window2 = gui.Janela_Inicio(), None
+window1, window2, window3 = gui.Janela_Inicio(), None, None
 
 #Loop de eventos
 while True:
@@ -38,14 +39,20 @@ while True:
         window2 = gui.janela_pesquisa()
         window1.hide()
 
+    if janela == window2 and evento == 'Usuários 🧑':
+         window3 = gui.pesquisa_usuario()
+         window2.hide()
+
     #Quando queremos voltar para janela anterior
 
     if janela == window2 and evento == 'Voltar':
         window2.close()
         window1.un_hide()
 
-    
-
+    if janela == window3 and evento == 'Voltar':
+         window3.close()
+         window2.un_hide()
+         
     #Lógica de eventos dos botões    
     if janela == window1 and evento == 'ADICIONAR ➕': 
             sql.insere_emprestimo(con, str((valores['id-usuario'])),str((valores['id-livro'])),str((valores['data-empr'])),str((valores['data-devol'])))

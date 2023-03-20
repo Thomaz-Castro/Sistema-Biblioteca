@@ -97,5 +97,5 @@ def select_todos_emprestimos(con):
 
 
 def Query_padrao():
-    query = """select u.nome, l.titulo, aut.nome, edit.nome,l.isbn , empr.data_emprestimo, empr.data_devolucao  from emprestimos as emprjoin usuarios as u on u.id = empr.usuario_id join livros as l on l.id = empr.livro_id join autores as aut on aut.id = l.autor_id join editoras as edit on edit.id = l.editora_id order by empr.id desc"""
+    query = """select u.nome, l.titulo, aut.nome, edit.nome,l.isbn , empr.data_emprestimo, empr.data_devolucao  from emprestimos as empr join usuarios as u on u.id = empr.usuario_id join livros as l on l.id = empr.livro_id join autores as aut on aut.id = l.autor_id join editoras as edit on edit.id = l.editora_id order by empr.id desc;"""
     return query

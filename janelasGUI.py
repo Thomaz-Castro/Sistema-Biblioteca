@@ -46,5 +46,39 @@ def janela_pesquisa():
     ]
     return sg.Window('Pesquisar🔎', layout, element_justification='c', size=(1024, 576), finalize=True)
 
+def pesquisa_usuario():
+    sg.theme('DarkTeal9')
+    con = criar_conexao("localhost", "root", "", "biblioteca")
+    df = read_sql("select * from usuarios;",con)
+    colunas_pes_usu=['ID','Nome', 'Endereço','Cidade','UF','Sexo','Telefone','Email']
+    layout = [
+        [sg.Text('Usuários 🧑', font=('arial', 48))],
+        [sg.Column([
+            [sg.Text('ID      ', font=('Helvetica', 10), tooltip='Digite o ID do usuário:'),
+            sg.Text('Nome                  ', font=('Helvetica', 13), tooltip='Digite o nome do usuário:'), sg.Text('Endereço                                   ', font=('Helvetica', 13), tooltip='Digite o endereço do usuário:')],
+            [sg.Input(key='id-usuario', size=(5)), sg.Input(key='usuario-nome',
+                                                            size=(17)), sg.Input(key='usuario-ender', size=(36))]
+        ], element_justification='center', expand_x=True, pad=(285, 0))],
+        [sg.Column([
+            [sg.Text('Cidade                                        ', font=('Helvetica', 13), tooltip='Digite o ID do usuário:'),
+            sg.Text('UF        ', font=('Helvetica', 10), tooltip='Digite o UF da cidade:'), sg.Text('Sexo         ', font=('Helvetica', 11), tooltip='Digite o sexo do usuario:')],
+            [sg.Input(key='cidade-usuario', size=(36)), sg.Combo(values=['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE',
+                                                                        'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'], key='usuario-UF', size=(5)), sg.Combo(key="usuario-Sexo", size=(15), values=["Homem", "Mulher"])]
+        ], element_justification='left', expand_x=True, pad=(285, 0))],
+        [sg.Column([
+            [sg.Text('Email                                             ', font=('Helvetica', 10), tooltip='Digite o email do usuário:'),
+            sg.Text('Telefone (só numeros)', font=('Helvetica', 10), tooltip='Digite o telefone do usuário')],
+            [sg.Input(key='telefone-usuario', size=(30)),
+            sg.Input(key='email-usuario', size=(30))]
+        ], element_justification='left', expand_x=True, pad=(285, 0))],
+        [sg.Button("pesquisar", expand_x=True, pad=(285, 20))],
+        [sg.Column([
+            [sg.Table(values=df.values.tolist(), headings=colunas_pes_usu, auto_size_columns=True,
+                        justification='center', num_rows=7, key='-TABLE-')],
+        ], element_justification='center', expand_x=True)],
+        [sg.Button('Voltar', font=('arial', 32), size=(15, 1),
+                button_color=('white', 'red'), border_width=5, pad=(10, 20))]
+    ]
+    return sg.Window('Pesquisar🔎', layout, element_justification='c', size=(1024, 576), finalize=True)
 
 
